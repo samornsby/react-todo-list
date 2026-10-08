@@ -1,32 +1,24 @@
 import { useState } from "react";
 import { type Todo } from "./types";
 import TodoItem from "./TodoItem";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { addTodo, toggleComplete } from "./todoSlice";
 
-interface TodoListProps {
-  todos: Todo[];
-  onTodosChange: (todo: Todo[]) => void;
-}
-export default function TodoList({ todos, onTodosChange }: TodoListProps) {
+export default function TodoList() {
+  const todos = useAppSelector((state) => state.todos.values);
+
+  const dispatch = useAppDispatch();
+
   const [text, setText] = useState("");
 
-  const addTodo = () => {
+  const handleAddTodo = () => {
     const todo: Todo = { id: crypto.randomUUID(), text, isComplete: false };
-    onTodosChange([...todos, todo]);
+    dispatch(addTodo(todo));
     setText("");
   };
 
   const handleComplete = (id: string) => {
-    const index = todos.findIndex((todo) => todo.id === id);
-
-    if (index === -1) {
-      return;
-    }
-
-    const todo: Todo = {
-      ...todos[index],
-      isComplete: !todos[index].isComplete,
-    };
-    onTodosChange(todos.toSpliced(index, 1, todo));
+    dispatch(toggleComplete(id));
   };
 
   return (
@@ -36,7 +28,7 @@ export default function TodoList({ todos, onTodosChange }: TodoListProps) {
         value={text}
         onChange={(event) => setText(event.target.value)}
       />
-      <button onClick={addTodo}>Add</button>
+      <button onClick={handleAddTodo}>Add</button>
       <ul>
         {todos.map((todo) => (
           <TodoItem

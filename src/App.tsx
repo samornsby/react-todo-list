@@ -1,16 +1,14 @@
-import { useState } from "react";
 import TodoList from "./features/todos/TodoList";
-import type { Todo } from "./features/todos/types";
+import { selectTodoCount } from "./features/todos/todoSlice";
+import { useAppSelector } from "./hooks";
 
 export default function App() {
-  const [todos, setTodos] = useState<Todo[]>([
-    { id: "1", text: "Learn React", isComplete: true },
-  ]);
+  const count = useAppSelector(selectTodoCount);
 
   return (
     <>
-      <h1>Todos: {todos.length}</h1>
-      <TodoList todos={todos} onTodosChange={setTodos} />
+      <h1>Todos: {count}</h1>
+      <TodoList />
     </>
   );
 }
